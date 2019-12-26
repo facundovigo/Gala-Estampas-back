@@ -1,0 +1,10 @@
+*.pyc
+*.sublime-project
+*.sublime-workspace
+/uploads/*
+*.idea/
+*venv/
+.coverage
+db.sqlite3
+
+!/uploads/.gitkeep

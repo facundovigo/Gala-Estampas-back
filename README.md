@@ -3,7 +3,7 @@ Este proyecto apunta a facilitarnos el trabajo de inicio de un proyecto, teniend
 Es importante entender que va a requerir un mantenimiento y lo vamos a hacer entre todes.
 
 ## Cómo empiezo?
-Prerequisito: Tener un virtual env para el proyecto, ya activado.
+**Prerequisito: Tener un virtual env para el proyecto, ya activado.**
 
 Clonas el proyecto:
 ``` 
@@ -61,6 +61,7 @@ WSGI_APPLICATION = 'mi_nuevo_proyecto.wsgi.application'
 - Instalación de DRF
 
 ### Qué se puede agregar?
+- Configuracion de la Base de Datos
 - Login con JWT
 - Notificaciones (fcm-django)
 
