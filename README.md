@@ -61,6 +61,8 @@ WSGI_APPLICATION = 'mi_nuevo_proyecto.wsgi.application'
 - Instalación de DRF
 
 ### Qué se puede agregar?
+- Modelo User personalizado
+- Admin panel de Maistrenko
 - Configuracion de la Base de Datos
 - Login con JWT
 - Notificaciones (fcm-django)
