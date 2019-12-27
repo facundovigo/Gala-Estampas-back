@@ -1,0 +1,36 @@
+services:
+  - mysql:5.7.26
+
+variables:
+  MYSQL_DATABASE: "baseproject"
+  MYSQL_ROOT_PASSWORD: "hYguOjKg4UiX91c1gX6SAMJgHjTsASuO"
+
+stages:
+  - test
+  - deploy
+
+before_script:
+  - apt-get update -q -y
+  - apt-get install -y python3-pip
+  - python -v
+  - pip install -r requirements.txt
+
+test:
+  image: python:3.6
+  stage: test
+  script:
+  - python manage.py test -k
+  only:
+  - merge_requests
+
+deploy:
+  stage: deploy
+  image: python:3.6
+  dependencies:
+    - test
+  script:
+    - pip install coverage
+    - coverage run --source='.' manage.py test -k
+    - coverage report
+  only:
+    - master

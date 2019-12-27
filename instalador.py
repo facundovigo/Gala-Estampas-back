@@ -22,7 +22,9 @@ if re.fullmatch("[a-zA-Z0-9_]+(?<!_)$", project_name):
 		'{0}/{0}/asgi.py'.format(project_name), 
 		'{0}/{0}/wsgi.py'.format(project_name), 
 		'{0}/{0}/settings.py'.format(project_name), 
-		'{0}/manage.py'.format(project_name)
+		'{0}/manage.py'.format(project_name),
+		'{0}/.coveragerc'.format(project_name),
+		'{0}/.gitlab-ci.yml'.format(project_name),
 		]
 
 	for file_to_replace in files_to_replace:
