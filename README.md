@@ -52,16 +52,25 @@ Debería decir:
 ```
 WSGI_APPLICATION = 'mi_nuevo_proyecto.wsgi.application'
 ```
+
+Ahora, vamos a configurar git para que no se suban los cambios a ese repositorio
+```
+$ git remote set-url origin [url-de-mi-nuevo-proyecto]
+```
+
 ### Llegaste al final de la configuración, a partir de ahora, es un proyecto regular de Django.
 
+
+### Configurar el usuario de django
+La funcionalidad que armamos permite decidir si los usuarios se van a autenticar con email o con nombre de usuario. Si se autentican con email, el nombre de usuario no será requerido. Esto se configura desde el archivo settings, con la key AUTH_WITH_EMAIL.
 
 
 ### Incluye
 - Instalación de Django
 - Instalación de DRF
+- Modelo User personalizado
 
 ### Qué se puede agregar?
-- Modelo User personalizado
 - Admin panel de Maistrenko
 - Configuracion de la Base de Datos
 - Login con JWT
