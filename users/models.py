@@ -1,10 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from baseproject.settings import AUTH_WITH_EMAIL
+from django.conf import settings
 from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
-	if AUTH_WITH_EMAIL:
+	if settings.AUTH_WITH_EMAIL:
 		REQUIRED_FIELDS = []
 		objects = CustomUserManager()
 		USERNAME_FIELD = 'email'
