@@ -8,10 +8,26 @@ Es importante entender que va a requerir un mantenimiento y lo vamos a hacer ent
 Clonas el proyecto:
 ``` 
 $ git clone git@gitlab.com:gaia-software/django-base.git 
-``` 
+```
+
+## Instalación
+Hay dos formas de instalar esto:
+- Con el script instalador.py
+- Manualmente
+
+### Usando el script
+Ejecuta el siguiente comando:
+```
+mv baseproject/instalador.py instalador.py && python3 instalador.py
+```
+
+Listo!
+
+### Manualmente
+
 Cambias al directorio del proyecto:
 ```
-cd django-base
+cd baseproject/
 ```
 Renombras la carpeta del proyecto:
 ```
