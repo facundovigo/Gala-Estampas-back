@@ -85,8 +85,11 @@ La funcionalidad que armamos permite decidir si los usuarios se van a autenticar
 - Instalación de Django
 - Instalación de DRF
 - Modelo User personalizado
+- Configuracion de CI (gitlab)
+- Configuración de coverage (gitlab)
 
 ### Qué se puede agregar?
+- Media folder (para subir imagenes)
 - Admin panel de Maistrenko
 - Configuracion de la Base de Datos
 - Login con JWT
