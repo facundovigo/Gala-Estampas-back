@@ -3,7 +3,7 @@ import time
 import subprocess
 import os
 
-ORIGINAL_FOLDER_NAME = 'baseproject'
+ORIGINAL_FOLDER_NAME = 'django-base'
 ORIGINAL_PROJECT_NAME = 'baseproject'
 project_name = input("Nombre del proyecto: ")
 project_url = input("URL del proyecto (git): ")
