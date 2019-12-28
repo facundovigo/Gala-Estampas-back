@@ -18,7 +18,8 @@ Hay dos formas de instalar esto:
 ### Usando el script
 Ejecuta el siguiente comando:
 ```
-mv baseproject/instalador.py instalador.py && python3 instalador.py
+mv django-base/instalador.py instalador.py && python3 instalador.py  
+
 ```
 
 Listo!
