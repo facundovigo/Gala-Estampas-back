@@ -104,6 +104,14 @@ Y levantamos el server:
 $ python3.8 manage.py  runserver
 ```
 
+### Admin panel
+
+Ingresando en localhost:8000/admin podemos entrar al panel de administrador pero antes necesitamos crear un superusuario:
+```
+$ python3.8 manage.py  createsuperuser
+```
+
+
 ### Configurar el usuario de django
 La funcionalidad que armamos permite decidir si los usuarios se van a autenticar con email o con nombre de usuario. Si se autentican con email, el nombre de usuario no será requerido. Esto se configura desde el archivo settings, con la key AUTH_WITH_EMAIL.
 
