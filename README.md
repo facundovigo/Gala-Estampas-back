@@ -3,7 +3,6 @@ Este proyecto apunta a facilitarnos el trabajo de inicio de un proyecto, teniend
 Es importante entender que va a requerir un mantenimiento y lo vamos a hacer entre todes.
 
 ## Cómo empiezo?
-**Prerequisito: Tener un virtual env para el proyecto, ya activado.**
 
 Clonas el proyecto:
 ``` 
@@ -15,16 +14,17 @@ Hay dos formas de instalar esto:
 - Con el script instalador.py
 - Manualmente
 
-### Usando el script
+#### Usando el script
 Ejecuta el siguiente comando:
 ```
 mv django-base/instalador.py instalador.py && python3 instalador.py  
 
 ```
+Pedirá un Nombre de Proyecto y opcionalmente la url del repositorio de git que estamos queriendo crear.
 
 Listo!
 
-### Manualmente
+#### Manualmente
 
 Cambias al directorio del proyecto:
 ```
@@ -35,7 +35,7 @@ Renombras la carpeta del proyecto:
 mv baseproject/ mi_nuevo_proyecto
 ```
 
-### Modificamos los siguientes archivos para que apunten a nuestro nuevo nombre:
+##### Modificamos los siguientes archivos para que apunten a nuestro nuevo nombre:
 - manage.py 
 - mi_nuevo_proyecto/asgi.py 
 - mi_nuevo_proyecto/wsgi.py 
@@ -50,7 +50,7 @@ Debería decir
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mi_nuevo_proyecto.settings')
 ```
 
-### Modificamos el archivo mi_nuevo_proyecto/settings.py
+##### Modificamos el archivo mi_nuevo_proyecto/settings.py
 La linea que dice:
 ```
 ROOT_URLCONF = 'baseproject.urls'
@@ -75,7 +75,41 @@ Ahora, vamos a configurar git para que no se suban los cambios a ese repositorio
 $ git remote set-url origin [url-de-mi-nuevo-proyecto]
 ```
 
-### Llegaste al final de la configuración, a partir de ahora, es un proyecto regular de Django.
+## Con esto finaliza la configuración, a partir de ahora, es un proyecto regular de Django.
+
+¿Pero que significa esto?
+Quiere decir que tenes que crear un virtual-env con python3.8 para tu proyecto:
+
+Primero tendrias que tener instalada dicha version de Python:
+https://tecadmin.net/install-python-3-8-ubuntu/
+
+Una vez que tenemos esto creamos el ambiente virtual:
+```
+$ python3.8 -m venv nombreDelProyecto-env
+```
+Luego lo activamos:
+```
+$ source bin/activate
+```
+Instalamos los requerimientos:
+```
+$ pip3 install -r requeriments.txt
+```
+Aplicamos las migraciones en la carpeta del proyecto:
+```
+$ python3.8 manage.py migrate
+```
+Y levantamos el server:
+```
+$ python3.8 manage.py  runserver
+```
+
+### Admin panel
+
+Ingresando en localhost:8000/admin podemos entrar al panel de administrador pero antes necesitamos crear un superusuario:
+```
+$ python3.8 manage.py  createsuperuser
+```
 
 
 ### Configurar el usuario de django

@@ -40,7 +40,12 @@ if re.fullmatch("[a-zA-Z0-9_]+(?<!_)$", project_name):
 
 	time.sleep(1)
 	print('✓ Nombre configurado')
-	subprocess.run(['cd {0} && git remote set-url origin {1}'.format(project_name, project_url)], shell=True)
+	
+	if project_url:
+		subprocess.run(['cd {0} && git remote set-url origin {1}'.format(project_name, project_url)], shell=True)
+	else:
+		subprocess.run(['cd {0} && git remote remove origin'.format(project_name, project_url)], shell=True)
+
 	time.sleep(1)
 	print('✓ git configurado')
 else:
