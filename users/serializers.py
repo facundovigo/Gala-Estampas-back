@@ -13,3 +13,6 @@ class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = Token
         fields = ('key', 'user')
+
+class RecoverPasswordSerializer(serializers.Serializer):
+	email = serializers.EmailField()

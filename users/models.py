@@ -1,3 +1,4 @@
+from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
@@ -13,5 +14,10 @@ class CustomUser(AbstractUser):
     else:
         pass
 
-
 User = get_user_model()
+
+
+class UserRecoveryCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.IntegerField(verbose_name='Codigo')
+    created_at = models.DateTimeField(auto_now_add=True)
