@@ -30,8 +30,6 @@ class CustomUserViewset(viewsets.ModelViewSet):
 
         serializer.is_valid(raise_exception=True)
 
-        user = get_object_or_404(User, email=serializer.validated_data['email'])
-
         import random
 
         number = random.randrange(10000, 99999)
@@ -40,7 +38,6 @@ class CustomUserViewset(viewsets.ModelViewSet):
         UserRecoveryCode.objects.filter(user=usr).delete()
 
         user_code = UserRecoveryCode.objects.create(user=usr, code=number)
-        user_code.save()
 
         send_mail(
             'Recupera tu contraseña',
@@ -68,5 +65,5 @@ class CustomUserViewset(viewsets.ModelViewSet):
 
         #obtenemos un nuevo token
         token = Token.objects.get_or_create(user=user_recovery_code.user)[0]
-        return Response(LoginSerializer(token).data,status=status.HTTP_200_OK)
+        return Response(LoginSerializer(token).data)
 
