@@ -28,7 +28,7 @@ router = DefaultRouter()
 
 urlpatterns = [
     path('', admin.site.urls),
-    path('api-token-auth/', CustomAuthToken.as_view())
+    path('api-auth/', CustomAuthToken.as_view())
 
 ]
 

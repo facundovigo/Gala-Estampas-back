@@ -1,9 +1,18 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import *
-from .models import Event
+from rest_framework.authtoken.models import Token
 
 
-class EventSerializer():
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Event
-        fields = ('id', 'title', 'description')
+        model = User
+        fields = ('id', 'username', 'email', 'first_name', 'last_name')
+
+
+class LoginSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+    class Meta:
+        model = Token
+        fields = ('key', 'user')
