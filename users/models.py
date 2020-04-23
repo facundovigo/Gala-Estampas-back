@@ -1,17 +1,8 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from .managers import CustomUserManager
-
-
-class NameModel(models.Model):
-    name = models.CharField(max_length=50)
-
-    class Meta:
-        abstract = True
-
-    def __str__(self):
-        return self.name
 
 
 class CustomUser(AbstractUser):
@@ -23,15 +14,10 @@ class CustomUser(AbstractUser):
     else:
         pass
 
+User = get_user_model()
 
-class Event(models.Model):
-    title = models.TextField(default='Titulo evento')
-    description = models.TextField('Descripcion', blank=True, null=True)
-    event_picture = models.ImageField(verbose_name='Foto de evento', upload_to='evebt_pictures', blank=True, null=True)
 
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = 'evento'
-        verbose_name_plural = 'eventos'
+class UserRecoveryCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.IntegerField(verbose_name='Codigo')
+    created_at = models.DateTimeField(auto_now_add=True)
