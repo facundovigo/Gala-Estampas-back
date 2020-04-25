@@ -14,5 +14,11 @@ class LoginSerializer(serializers.ModelSerializer):
         model = Token
         fields = ('key', 'user')
 
+
 class RecoverPasswordSerializer(serializers.Serializer):
 	email = serializers.EmailField()
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+	old_password = serializers.CharField()
+	new_password = serializers.CharField()
