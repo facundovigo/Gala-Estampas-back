@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import LoginSerializer, RecoverPasswordSerializer
+from .serializers import LoginSerializer, RecoverPasswordSerializer, ChangePasswordSerializer
 from .models import User, UserRecoveryCode
 
 class CustomUserViewset(viewsets.ModelViewSet):
@@ -67,3 +67,21 @@ class CustomUserViewset(viewsets.ModelViewSet):
         token = Token.objects.get_or_create(user=user_recovery_code.user)[0]
         return Response(LoginSerializer(token).data)
 
+
+    @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def change_password(self, request):
+        user = request.user
+
+        serializer = ChangePasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if not user.check_password(serializer.validated_data['old_password']):
+            return Response({ "error": "INCORRECT_OLD_PASSWORD" }, status=status.HTTP_403_FORBIDDEN)
+
+        user.set_password(serializer.validated_data['new_password'])    
+        user.save()
+
+        Token.objects.filter(user=user).delete()
+        token = Token.objects.get_or_create(user=user)[0]
+
+        return Response(LoginSerializer(token).data)
