@@ -123,6 +123,7 @@ La funcionalidad que armamos permite decidir si los usuarios se van a autenticar
 - Configuracion de CI (gitlab)
 - Configuración de coverage (gitlab)
 - Recuperacion de contraseña
+- Cambio de contraseña
 - Modelo de ejemplo con campo imagen
 - Media folder (para subir imagenes)
 
