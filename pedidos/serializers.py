@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import Event
+from .models import Pedido
 
 
-class EventSerializer(serializers.ModelSerializer):
+class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Event
+        model = Pedido
         fields = ('id', 'title', 'description', 'event_picture')

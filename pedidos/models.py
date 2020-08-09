@@ -1,6 +1,6 @@
 from django.db import models
 
-class Event(models.Model):
+class Pedido(models.Model):
     title = models.TextField(default='Titulo evento')
     description = models.TextField('Descripcion', blank=True, null=True)
     event_picture = models.ImageField(verbose_name='Foto de evento', upload_to='evebt_pictures', blank=True, null=True)
@@ -9,5 +9,5 @@ class Event(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = 'evento'
-        verbose_name_plural = 'eventos'
+        verbose_name = 'Pedido'
+        verbose_name_plural = 'Pedidos'

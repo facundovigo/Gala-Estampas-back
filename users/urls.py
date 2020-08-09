@@ -6,3 +6,4 @@ from .views import CustomUserViewset
 router = DefaultRouter()
 router.register(r'auth', CustomUserViewset, basename='auth')
 urlpatterns = router.urls
+
