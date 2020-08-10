@@ -4,5 +4,5 @@ from .views import PedidoViewSet
 
 
 router = DefaultRouter()
-router.register(r'events', PedidoViewSet, basename='events')
+router.register(r'producto', PedidoViewSet, basename='producto')
 urlpatterns = router.urls

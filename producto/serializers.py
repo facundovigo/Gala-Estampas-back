@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import Pedido
+from .models import Producto
 
 
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Pedido
+        model = Producto
         fields = ('id', 'title', 'description', 'event_picture')

@@ -21,7 +21,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'material.admin',
     'material.admin.default',
-    'pedidos.apps.PedidosConfig',
+    'producto.apps.ProductoConfig',
     'users.apps.UsersConfig',
     'rest_framework',
     'django.contrib.auth',
