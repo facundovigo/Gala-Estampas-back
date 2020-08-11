@@ -1,8 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import PedidoViewSet
+from .views import OrderViewSet
 
 
 router = DefaultRouter()
-router.register(r'producto', PedidoViewSet, basename='producto')
+router.register(r'order', OrderViewSet, basename='order')
 urlpatterns = router.urls

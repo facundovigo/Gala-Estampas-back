@@ -21,7 +21,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'material.admin',
     'material.admin.default',
-    'producto.apps.ProductoConfig',
+    'product.apps.ProductConfig',
     'users.apps.UsersConfig',
     'rest_framework',
     'django.contrib.auth',
@@ -144,4 +144,17 @@ ADMIN_EMAIL = 'email@deprueba.com'
 
 PASSWORD_RECOVER_CODE_EXPIRATION = {
     'minutes': 10
+}
+
+MATERIAL_ADMIN_SITE = {
+    'MAIN_BG_COLOR':  '#eb231d',  # Admin site main color, css color should be specified
+    'MAIN_HOVER_COLOR':  '#ff5d57',  # Admin site main hover color, css color should be specified
+    #'PROFILE_PICTURE':  'path/to/image',  # Admin site profile picture (path to static should be specified)
+    #'PROFILE_BG':  'path/to/image',  # Admin site profile background (path to static should be specified)
+    #'LOGIN_LOGO':  'path/to/image',  # Admin site logo on login page (path to static should be specified)
+    #'LOGOUT_BG':  'path/to/image',  # Admin site background on login/logout pages (path to static should be specified)
+    'SHOW_THEMES':  True,  #  Show default admin themes button
+    'TRAY_REVERSE': True,  # Hide object-tools and additional-submit-line by default
+    'NAVBAR_REVERSE': False,  # Hide side navbar by default
+    'SHOW_COUNTS': True, # Show instances counts for each model
 }
