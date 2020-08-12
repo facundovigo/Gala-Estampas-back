@@ -19,7 +19,7 @@ class Article(models.Model):
 class Product(models.Model):
     name = models.TextField(default='', verbose_name='Nombre')
     description = models.TextField(blank=True, null=True, verbose_name='Descripción')
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, verbose_name='Artículo')
     stamp = models.ImageField(upload_to='product_stamp', blank=True, null=True, verbose_name='Estampa de producto')
     inscription = models.TextField(blank=True, null=True, verbose_name='Inscripción')
     photo = models.ImageField(upload_to='product_photo', blank=True, null=True, verbose_name='Foto de producto')

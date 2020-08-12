@@ -5,13 +5,13 @@ from .models import Product, Order, Article
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
-        fields = ('name', 'replacement_price')
+        fields = ('id', 'name', 'replacement_price')
 
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ('name', 'description', 'stamp', 'inscription', 'price')
+        fields = ('id', 'name', 'description', 'article', 'stamp', 'inscription', 'price')
 
 
 class OrderSerializer(serializers.ModelSerializer):

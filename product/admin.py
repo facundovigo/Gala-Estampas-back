@@ -10,8 +10,9 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    fields = ('name', 'description', 'stamp', 'inscription', 'price')
+    fields = ('name', 'description', 'article', 'stamp', 'inscription', 'price')
     icon_name = 'card_giftcard'
+
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
