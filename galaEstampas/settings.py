@@ -161,3 +161,5 @@ MATERIAL_ADMIN_SITE = {
     'NAVBAR_REVERSE': False,  # Hide side navbar by default
     'SHOW_COUNTS': True, # Show instances counts for each model
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
