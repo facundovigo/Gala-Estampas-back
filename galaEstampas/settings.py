@@ -70,12 +70,15 @@ WSGI_APPLICATION = 'galaEstampas.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'galaestampas',
+            'USER': 'demian',
+            'PASSWORD': 'toor',
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
     }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -158,3 +161,5 @@ MATERIAL_ADMIN_SITE = {
     'NAVBAR_REVERSE': False,  # Hide side navbar by default
     'SHOW_COUNTS': True, # Show instances counts for each model
 }
+
+CORS_ORIGIN_ALLOW_ALL = True

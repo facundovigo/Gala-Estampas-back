@@ -9,16 +9,33 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import LoginSerializer, RecoverPasswordSerializer, ChangePasswordSerializer
+from .serializers import LoginSerializer, RecoverPasswordSerializer, ChangePasswordSerializer, UserSerializer
 from .models import User, UserRecoveryCode
 
 class CustomUserViewset(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
     queryset = User.objects.all()
+
+    @action(detail=False, methods=['post'])
+    def register(self, request):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = User(
+            username=serializer.validated_data['email'],
+            **serializer.validated_data
+        )
+        user.set_password(serializer.validated_data['password'])
+        user.save()
+
+        token = Token.objects.get_or_create(user=user)[0]
+        return Response(LoginSerializer(token).data)
 
     @action(detail=False, methods=['post'])
     def login(self, request):
         serializer = AuthTokenSerializer(data=request.data,
                                            context={'request': request})
+        print(request, "req")
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token = Token.objects.get_or_create(user=user)[0]
