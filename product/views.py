@@ -14,7 +14,6 @@ class ProductViewSet(viewsets.ModelViewSet):
     def search_product(self, request):
         queryset = Product.objects.all().order_by('name')
         search_name = self.request.query_params.get('search_name')
-        print(search_name)
         if search_name:
             queryset = queryset.filter(name__icontains=search_name).order_by('name')
 
@@ -31,6 +30,14 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
 
+    @action(detail=False)
+    def search_order(self, request):
+        queryset = Order.objects.all().order_by('date_delivery')
+        client_id = self.request.query_params.get('client_id')
+        if client_id:
+            queryset = queryset.filter(client__id__icontains=client_id).order_by('-date_delivery')
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 class ArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
