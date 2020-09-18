@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
-from .models import Order, Product, Article
-from .serializers import OrderSerializer, ProductSerializer, ArticleSerializer
+from .models import Order, Product, Article, Category
+from .serializers import OrderSerializer, ProductSerializer, ArticleSerializer, CategorySerializer
 from rest_framework.decorators import action
 
 
@@ -26,6 +26,11 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class CategoryViewSet(viewsets.ModelViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
@@ -38,6 +43,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(client__id__icontains=client_id).order_by('-date_delivery')
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
 
 class ArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer

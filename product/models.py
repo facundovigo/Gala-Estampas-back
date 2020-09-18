@@ -5,23 +5,35 @@ from django.utils import timezone
 
 
 class Article(models.Model):
-    name = models.TextField(default='', verbose_name='Nombre')
+    code = models.IntegerField(unique=True, verbose_name='Código')
+    description = models.TextField(default='', verbose_name='Descripción')
     replacement_price = models.IntegerField(default=0, verbose_name='Precio de reposición')
 
     def __str__(self):
-        return self.name
+        return f'({self.code}) + {self.description}'
 
     class Meta:
         verbose_name = 'Artículo'
         verbose_name_plural = 'Artículos'
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True, verbose_name='Categoría', default="")
+    icon = models.ImageField(upload_to='icon_category', verbose_name='Ícono')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Categoría'
+        verbose_name_plural = 'Categorías'
+
+
 class Product(models.Model):
     name = models.TextField(default='', verbose_name='Nombre')
     description = models.TextField(blank=True, null=True, verbose_name='Descripción')
     article = models.ForeignKey(Article, on_delete=models.CASCADE, verbose_name='Artículo')
-    stamp = models.ImageField(upload_to='product_stamp', blank=True, null=True, verbose_name='Estampa de producto')
-    inscription = models.TextField(blank=True, null=True, verbose_name='Inscripción')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
     photo = models.ImageField(upload_to='product_photo', blank=True, null=True, verbose_name='Foto de producto')
     price = models.IntegerField(verbose_name='Precio')
 
