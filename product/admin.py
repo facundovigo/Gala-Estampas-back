@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Order, Article
+from .models import Product, Order, Article, Category
 
 
 @admin.register(Order)
@@ -10,11 +10,17 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    fields = ('name', 'description', 'article', 'stamp', 'inscription', 'price')
+    fields = ('name', 'description', 'category', 'article', 'photo', 'price')
     icon_name = 'card_giftcard'
 
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    fields = ('name', 'replacement_price')
+    fields = ('code', 'description', 'replacement_price')
     icon_name = 'card_giftcard'
+
+
+@admin.register(Category)
+class ArticleAdmin(admin.ModelAdmin):
+    fields = ('name', 'icon')
+    icon_name = 'shop'
