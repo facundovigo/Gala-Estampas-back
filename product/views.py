@@ -14,8 +14,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     def search_product(self, request):
         queryset = Product.objects.all().order_by('name')
         search_name = self.request.query_params.get('search_name')
+        search_category = self.request.query_params.get('search_category')
         if search_name:
             queryset = queryset.filter(name__icontains=search_name).order_by('name')
+        if search_category:
+            queryset = queryset.filter(category__id__icontains=search_category).order_by('name')
 
         #page = self.paginate_queryset(queryset)
         #if page is not None:

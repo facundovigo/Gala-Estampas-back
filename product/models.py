@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 class Article(models.Model):
-    code = models.IntegerField(unique=True, verbose_name='Código')
+    code = models.CharField(unique=True, max_length=20, verbose_name='Código')
     description = models.TextField(default='', verbose_name='Descripción')
     replacement_price = models.IntegerField(default=0, verbose_name='Precio de reposición')
 
