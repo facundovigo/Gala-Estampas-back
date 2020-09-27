@@ -4,6 +4,25 @@ import datetime
 from django.utils import timezone
 
 
+class Client(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profiles')
+    birthdate = models.DateField(verbose_name='fch Nacimiento')
+    address = models.CharField(max_length=50, blank=True, null=True, verbose_name='Dirección')
+    city = models.CharField(max_length=50, blank=True, null=True, verbose_name='Ciudad')
+    state = models.CharField(max_length=50, blank=True, null=True, verbose_name='Provincia')
+    country = models.CharField(max_length=50, blank=True, null=True, verbose_name='País')
+    zip_code = models.CharField(max_length=8, blank=True, null=True, verbose_name='Cód Postal')
+    telephone = models.IntegerField(verbose_name='Teléfono')
+    #instagram
+
+    def __str__(self):
+        return f'{self.user}'
+
+    class Meta:
+        verbose_name = 'Cliente'
+        verbose_name_plural = 'Clientes'
+
+
 class Article(models.Model):
     code = models.CharField(unique=True, max_length=20, verbose_name='Código')
     description = models.TextField(default='', verbose_name='Descripción')
@@ -18,7 +37,7 @@ class Article(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=50, unique=True, verbose_name='Categoría', default="")
+    name = models.CharField(max_length=50, unique=True, verbose_name='Categoría')
     icon = models.ImageField(upload_to='icon_category', verbose_name='Ícono')
 
     def __str__(self):
@@ -60,3 +79,15 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Pedido'
         verbose_name_plural = 'Pedidos'
+
+
+class Favorite(models.Model):
+    client = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Cliente')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Producto')
+
+    def __str__(self):
+        return f'{self.client} - {self.product}'
+
+    class Meta:
+        verbose_name = 'Favorito'
+        verbose_name_plural = 'Favoritos'

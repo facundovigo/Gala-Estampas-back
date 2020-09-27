@@ -1,9 +1,23 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
-from .models import Order, Product, Article, Category
-from .serializers import OrderSerializer, ProductSerializer, ArticleSerializer, CategorySerializer
+from .models import *
+from .serializers import *
 from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
+
+
+class ClientViewSet(viewsets.ModelViewSet):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+
+    def get_queryset(self):
+        user_id = self.request.query_params.get('user')
+
+        if user_id:
+            self.queryset = self.queryset.filter(user=user_id)
+
+        return self.queryset
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -51,3 +65,19 @@ class OrderViewSet(viewsets.ModelViewSet):
 class ArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
+
+
+class FavoriteViewSet(viewsets.ModelViewSet):
+    serializer_class = FavoriteSerializer
+
+    @action(detail=False)
+    def search_by_user_id(self, request):
+        client_id = self.request.query_params.get('client_id')
+
+
+        queryset = None
+        if client_id:
+            queryset = Favorite.objects.filter(client=client_id)
+            #queryset = get_object_or_404(Favorite, client=client_id)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
