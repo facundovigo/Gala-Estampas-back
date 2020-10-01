@@ -82,8 +82,8 @@ class Order(models.Model):
 
 
 class Favorite(models.Model):
-    client = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Cliente')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Producto')
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client_r', verbose_name='Cliente')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_r', verbose_name='Producto')
 
     def __str__(self):
         return f'{self.client} - {self.product}'

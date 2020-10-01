@@ -5,9 +5,11 @@ from users.serializers import UserSerializer
 
 
 class ClientSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Client
-        fields = ('id', 'user', 'birthdate', 'adress', 'city', 'state', 'country', 'zipcode', 'telephone')
+        fields = ('id', 'user', 'birthdate', 'address', 'city', 'state', 'country', 'zip_code', 'telephone')
+
 
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,9 +40,11 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    #product_id = ProductSerializer(many=True, read_only=True, source='product')
-    #client_id = UserSerializer(many=True, read_only=True, source='client')
+    client_id = UserSerializer(many=False, read_only=True, source='client')
+    product_id = ProductSerializer(many=False, read_only=True, source='product')
+
     class Meta:
         model = Favorite
-        fields = ('id', 'client', 'product')
+        fields = ('id', 'client', 'product', 'client_id', 'product_id')
+
 

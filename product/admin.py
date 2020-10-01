@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Product, Order, Article, Category
+from .models import *
+
+
+@admin.register(Client)
+class ClientAdmin(admin.ModelAdmin):
+    fields = ('user', 'birthdate', 'address', 'city', 'state', 'country', 'zip_code', 'telephone')
+    icon_name = 'person'
 
 
 @admin.register(Order)

@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 from .models import *
 from .serializers import *
 from rest_framework.decorators import action
-from django.shortcuts import get_object_or_404
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -69,15 +68,15 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
-
+    queryset = Favorite.objects.all()
     @action(detail=False)
     def search_by_user_id(self, request):
         client_id = self.request.query_params.get('client_id')
 
-
-        queryset = None
         if client_id:
             queryset = Favorite.objects.filter(client=client_id)
-            #queryset = get_object_or_404(Favorite, client=client_id)
+
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
