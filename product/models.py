@@ -65,7 +65,7 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    client = models.ForeignKey(User, on_delete=models.CASCADE, default=None, verbose_name='Cliente') #este usr vamos a tener q modificarlo porq es el base
+    client = models.ForeignKey(User, on_delete=models.CASCADE, default=None, verbose_name='Cliente')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Producto')
     cant = models.IntegerField(default=1, verbose_name='Cantidad')
     date_order = models.DateField(default=datetime.date.today, verbose_name='Fecha de Pedido')
