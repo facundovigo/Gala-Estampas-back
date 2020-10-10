@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from .models import *
 from .serializers import *
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -22,6 +23,7 @@ class ClientViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+    pagination_class = PageNumberPagination
 
     @action(detail=False)
     def search_product(self, request):
@@ -31,12 +33,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         if search_name:
             queryset = queryset.filter(name__icontains=search_name).order_by('name')
         if search_category:
-            queryset = queryset.filter(category__id__icontains=search_category).order_by('name')
+            queryset = queryset.filter(category__id=search_category).order_by('name')
 
-        #page = self.paginate_queryset(queryset)
-        #if page is not None:
-            #serializer = self.get_serializer(page, many=True)
-            #return self.get_paginated_response(serializer.data)
+        page = self.paginate_queryset(queryset)
+        print(page)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
