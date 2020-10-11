@@ -36,7 +36,6 @@ class ProductViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(category__id=search_category).order_by('name')
 
         page = self.paginate_queryset(queryset)
-        print(page)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
@@ -50,9 +49,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
 
 
+class OrderPagination(PageNumberPagination):
+    page_size = 5
+
+
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
+    pagination_class = OrderPagination
 
     @action(detail=False)
     def search_order(self, request):
@@ -60,6 +64,12 @@ class OrderViewSet(viewsets.ModelViewSet):
         client_id = self.request.query_params.get('client_id')
         if client_id:
             queryset = queryset.filter(client__id__icontains=client_id).order_by('-date_delivery')
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -69,16 +79,25 @@ class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
 
 
+class FavoritePagination(PageNumberPagination):
+    page_size = 5
+
+
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
+    pagination_class = FavoritePagination
+
     @action(detail=False)
     def search_by_user_id(self, request):
         client_id = self.request.query_params.get('client_id')
 
         if client_id:
             queryset = Favorite.objects.filter(client=client_id)
-
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
