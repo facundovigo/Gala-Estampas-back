@@ -5,6 +5,8 @@ from .models import *
 from .serializers import *
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
+from django.http import HttpResponse
+from django.http import JsonResponse
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -101,4 +103,20 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False)
+    def verify(self, request):
+        client_id = self.request.query_params.get('client_id')
+        product_id = self.request.query_params.get('product_id')
+        if client_id and product_id:
+            queryset = Favorite.objects.filter(client=client_id, product=product_id)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
+    @action(detail=False)
+    def delete(self, request):
+        user_id = self.request.query_params.get('user_id')
+        product_id = self.request.query_params.get('product_id')
+        if user_id and product_id:
+            Favorite.objects.filter(client=user_id, product=product_id).delete()
+            return HttpResponse(status=200)
+        return JsonResponse({'error': 'something bad'}, status=400)
