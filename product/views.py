@@ -120,3 +120,18 @@ class FavoriteViewSet(viewsets.ModelViewSet):
             Favorite.objects.filter(client=user_id, product=product_id).delete()
             return HttpResponse(status=200)
         return JsonResponse({'error': 'something bad'}, status=400)
+
+
+class ZipAmountViewSet(viewsets.ModelViewSet):
+    serializer_class = ZipAmountSerializer
+    queryset = ZipAmount.objects.all()
+
+    @action(detail=False)
+    def get_amount_by(self, request):
+        zip_code = self.request.query_params.get('zip_code')
+        if zip_code:
+            queryset = ZipAmount.objects.filter(zip_code=zip_code)
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return JsonResponse({'error': 'something bad'}, status=400)

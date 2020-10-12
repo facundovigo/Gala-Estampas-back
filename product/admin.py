@@ -30,3 +30,8 @@ class ArticleAdmin(admin.ModelAdmin):
 class ArticleAdmin(admin.ModelAdmin):
     fields = ('name', 'icon')
     icon_name = 'shop'
+
+@admin.register(ZipAmount)
+class ZipAmountAdmin(admin.ModelAdmin):
+    fields = ('zip_code', 'amount')
+    icon_name = 'geo'

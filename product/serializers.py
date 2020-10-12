@@ -48,3 +48,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = ('id', 'client', 'product', 'client_id', 'product_id')
 
 
+class ZipAmountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ZipAmount
+        fields = ('id', 'zip_code', 'amount')

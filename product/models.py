@@ -91,3 +91,14 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = 'Favorito'
         verbose_name_plural = 'Favoritos'
+
+class ZipAmount(models.Model):
+    zip_code = models.CharField(unique=True, max_length=8, verbose_name='Cód Postal')
+    amount = models.IntegerField(verbose_name='Precio')
+
+    def __str__(self):
+        return f'{self.zip_code} - ${self.amount}.-'
+
+    class Meta:
+        verbose_name = 'Costo de envío'
+        verbose_name_plural = 'Costos de envíos'
