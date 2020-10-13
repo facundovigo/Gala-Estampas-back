@@ -60,6 +60,14 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     pagination_class = OrderPagination
 
+    def create(self, request, **kwargs):
+        date_required = datetime.datetime.strptime(request.data['date_delivery'], "%Y-%m-%d").date()
+        date_min = datetime.date.today() + timezone.timedelta(days=5)
+        if date_required and date_required > date_min:
+            return super().create(request, **kwargs)
+        else:
+            return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
+
     @action(detail=False)
     def search_order(self, request):
         queryset = Order.objects.all().order_by('date_delivery')
