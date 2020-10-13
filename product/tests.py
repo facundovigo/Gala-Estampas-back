@@ -45,8 +45,22 @@ class OrderModelTest(TestCase):
         cat = Category.objects.create(name='test_name', icon='icon.png')
         Product.objects.create(article=art, category=cat, price=350)
 
-    def test_order_date_delivery_is_5_days_past_to_date_order(self):
+    def test_order_date_delivery_is_5_days_past_to_date_order_on_default_delivery_date(self):
         product = Product.objects.get(id=1)
         user = User.objects.get(username='test@test.com')
         order = Order.objects.create(client=user, product=product)
         self.assertEqual(order.date_delivery - order.date_order, timezone.timedelta(days=5))
+
+    def test_order_date_delivery_cant_be_5_days_less_than_today(self):
+        product = Product.objects.get(id=1)
+        user = User.objects.get(username='test@test.com')
+        invalid_date = datetime.date.today() + timezone.timedelta(days=3)
+        invalid_order = Order.objects.create(client=user, product=product, date_delivery=invalid_date)
+        self.assertRaisesMessage(invalid_order, 'date delivery must be 5 days greater than today')
+
+    def test_order_date_delivery_can_be_5_days_greater_than_today(self):
+        product = Product.objects.get(id=1)
+        user = User.objects.get(username='test@test.com')
+        valid_date = datetime.date.today() + timezone.timedelta(days=7)
+        valid_order = Order.objects.create(client=user, product=product, date_delivery=valid_date)
+        self.assertEqual(valid_order.date_delivery, valid_date)
