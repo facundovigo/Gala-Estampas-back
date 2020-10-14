@@ -14,10 +14,10 @@ class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
 
     def get_queryset(self):
-        user_id = self.request.query_params.get('user')
-
+        user_id = self.request.query_params.get('user_id')
+        print(user_id)
         if user_id:
-            self.queryset = self.queryset.filter(user=user_id)
+            self.queryset = self.queryset.filter(user__id=user_id)
 
         return self.queryset
 
