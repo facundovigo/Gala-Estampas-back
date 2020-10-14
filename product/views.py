@@ -14,10 +14,10 @@ class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
 
     def get_queryset(self):
-        user_id = self.request.query_params.get('user')
-
+        user_id = self.request.query_params.get('user_id')
+        print(user_id)
         if user_id:
-            self.queryset = self.queryset.filter(user=user_id)
+            self.queryset = self.queryset.filter(user__id=user_id)
 
         return self.queryset
 
@@ -59,6 +59,14 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
     pagination_class = OrderPagination
+
+    def create(self, request, **kwargs):
+        date_required = datetime.datetime.strptime(request.data['date_delivery'], "%Y-%m-%d").date()
+        date_min = datetime.date.today() + timezone.timedelta(days=5)
+        if date_required and date_required > date_min:
+            return super().create(request, **kwargs)
+        else:
+            return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
 
     @action(detail=False)
     def search_order(self, request):
