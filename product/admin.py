@@ -16,18 +16,18 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    fields = ('name', 'description', 'category', 'article', 'photo', 'price')
+    fields = ('name', 'description', 'category', 'supply', 'photo', 'price')
     icon_name = 'card_giftcard'
 
 
-@admin.register(Article)
-class ArticleAdmin(admin.ModelAdmin):
+@admin.register(Supply)
+class SupplyAdmin(admin.ModelAdmin):
     fields = ('code', 'description', 'replacement_price')
     icon_name = 'card_giftcard'
 
 
 @admin.register(Category)
-class ArticleAdmin(admin.ModelAdmin):
+class CategoryAdmin(admin.ModelAdmin):
     fields = ('name', 'icon')
     icon_name = 'shop'
 

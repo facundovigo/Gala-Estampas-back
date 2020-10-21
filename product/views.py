@@ -84,9 +84,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class ArticleViewSet(viewsets.ModelViewSet):
-    serializer_class = ArticleSerializer
-    queryset = Article.objects.all()
+class SupplyViewSet(viewsets.ModelViewSet):
+    serializer_class = SupplySerializer
+    queryset = Supply.objects.all()
 
 
 class FavoritePagination(PageNumberPagination):

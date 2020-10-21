@@ -23,7 +23,7 @@ class Client(models.Model):
         verbose_name_plural = 'Clientes'
 
 
-class Article(models.Model):
+class Supply(models.Model):
     code = models.CharField(unique=True, max_length=20, verbose_name='Código')
     description = models.TextField(default='', verbose_name='Descripción')
     replacement_price = models.IntegerField(default=0, verbose_name='Precio de reposición')
@@ -32,8 +32,8 @@ class Article(models.Model):
         return f'({self.code}) + {self.description}'
 
     class Meta:
-        verbose_name = 'Artículo'
-        verbose_name_plural = 'Artículos'
+        verbose_name = 'Insumo'
+        verbose_name_plural = 'Insumos'
 
 
 class Category(models.Model):
@@ -51,7 +51,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.TextField(default='', verbose_name='Nombre')
     description = models.TextField(blank=True, null=True, verbose_name='Descripción')
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, verbose_name='Artículo')
+    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, verbose_name='Artículo')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
     photo = models.ImageField(upload_to='product_photo', blank=True, null=True, verbose_name='Foto de producto')
     price = models.IntegerField(verbose_name='Precio')

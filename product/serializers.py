@@ -11,9 +11,9 @@ class ClientSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'birthdate', 'address', 'city', 'state', 'country', 'zip_code', 'telephone')
 
 
-class ArticleSerializer(serializers.ModelSerializer):
+class SupplySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Article
+        model = Supply
         fields = ('id', 'code', 'description', 'replacement_price')
 
 
@@ -28,7 +28,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'category_id', 'category', 'article', 'photo', 'price')
+        fields = ('id', 'name', 'description', 'category_id', 'category', 'supply', 'photo', 'price')
 
 
 class OrderSerializer(serializers.ModelSerializer):
