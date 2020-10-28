@@ -1,9 +1,11 @@
 from django.db import models
+
+from galaEstampas.settings import EMAIL_HOST_USER, BASE_DIR
 from users.models import User
 import datetime
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
+from django.core.mail import send_mail
 
 class Client(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profiles')
@@ -24,18 +26,36 @@ class Client(models.Model):
         verbose_name_plural = 'Clientes'
 
 
-class Supply(models.Model):
+class Component(models.Model):
     code = models.CharField(unique=True, max_length=20, verbose_name='Código')
     description = models.TextField(default='', verbose_name='Descripción')
     replacement_price = models.IntegerField(default=0, verbose_name='Precio de reposición')
     stock = models.IntegerField(default=0, verbose_name="Disponibles")
 
+    def reduce_stock(self, cant):
+        self.stock -= cant
+
     def __str__(self):
-        return f'({self.code}) + {self.description}'
+        return f'({self.code}) - {self.description}'
+
+    class Meta:
+        verbose_name = 'Componente'
+        verbose_name_plural = 'Componentes'
+
+
+class Supply(models.Model):
+    component = models.ForeignKey(Component, on_delete=models.CASCADE, null=True, verbose_name='Componente')
+    cant_per_prod = models.IntegerField(default=1, verbose_name="Cantidad por por producto")
+
+    def __str__(self):
+        return f'{self.component.__str__()} - cant: {self.cant_per_prod}'
 
     class Meta:
         verbose_name = 'Insumo'
         verbose_name_plural = 'Insumos'
+
+    def reduce_stock(self, cant):
+        self.component.reduce_stock(cant * self.cant_per_prod)
 
 
 class Category(models.Model):
@@ -66,6 +86,9 @@ class Product(models.Model):
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
 
+    def reduce_stock(self, cant):
+        self.supply.reduce_stock(cant)
+
 
 class Order(models.Model):
 
@@ -92,7 +115,20 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f'{self.client} {self.date_delivery}'
+        return f'{self.client.first_name} {self.product} {self.date_delivery}'
+
+    def save(self, *args, **kwargs):
+        send_mail(
+            'Se ha creado tu pedido',
+            f'{self.client.first_name} {self.product} {self.date_delivery}',
+            'sirdemian@gmail.com',
+            ['cansadadepensar@gmail.com'],
+            fail_silently=False
+        )
+        if getattr(self, 'product_status') == Order.ProductStatus.FINISHED:
+            self.product.reduce_stock(self.cant)
+
+        super(Order, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Pedido'

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from .models import *
 from .serializers import *
 from rest_framework.decorators import action
@@ -59,14 +59,19 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
     pagination_class = OrderPagination
+    permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, **kwargs):
         date_required = datetime.datetime.strptime(request.data['date_delivery'], "%Y-%m-%d").date()
         date_min = datetime.date.today() + timezone.timedelta(days=5)
-        if date_required and date_required > date_min:
-            return super().create(request, **kwargs)
+        if request.user:
+            request.data['client'] = request.user.id
+            if date_required and date_required > date_min:
+                return super().create(request, **kwargs)
+            else:
+                return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
         else:
-            return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
+            return JsonResponse({'error': 'You dont have permissions to do that'}, status=400)
 
     @action(detail=False)
     def search_order(self, request):
@@ -82,6 +87,11 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class ComponentViewSet(viewsets.ModelViewSet):
+    serializer_class = ComponentSerializer
+    queryset = Component.objects.all()
 
 
 class SupplyViewSet(viewsets.ModelViewSet):

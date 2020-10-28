@@ -22,7 +22,13 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Supply)
 class SupplyAdmin(admin.ModelAdmin):
-    fields = ('code', 'description', 'replacement_price')
+    fields = ('component', 'cant_per_prod')
+    icon_name = 'card_giftcard'
+
+
+@admin.register(Component)
+class ComponentAdmin(admin.ModelAdmin):
+    fields = ('code', 'description', 'replacement_price', 'stock')
     icon_name = 'card_giftcard'
 
 
