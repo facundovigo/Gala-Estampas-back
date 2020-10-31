@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from .models import *
 from .serializers import *
 from rest_framework.decorators import action
@@ -59,14 +59,20 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
     pagination_class = OrderPagination
+    permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, **kwargs):
         date_required = datetime.datetime.strptime(request.data['date_delivery'], "%Y-%m-%d").date()
         date_min = datetime.date.today() + timezone.timedelta(days=5)
-        if date_required and date_required > date_min:
-            return super().create(request, **kwargs)
+        if request.user:
+            request.data['client'] = request.user.id
+            if date_required and date_required > date_min:
+
+                return super().create(request, **kwargs)
+            else:
+                return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
         else:
-            return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
+            return JsonResponse({'error': 'You dont have permissions to do that'}, status=400)
 
     @action(detail=False)
     def search_order(self, request):
@@ -84,9 +90,14 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class ArticleViewSet(viewsets.ModelViewSet):
-    serializer_class = ArticleSerializer
-    queryset = Article.objects.all()
+class ComponentViewSet(viewsets.ModelViewSet):
+    serializer_class = ComponentSerializer
+    queryset = Component.objects.all()
+
+
+class SupplyViewSet(viewsets.ModelViewSet):
+    serializer_class = SupplySerializer
+    queryset = Supply.objects.all()
 
 
 class FavoritePagination(PageNumberPagination):
@@ -97,13 +108,18 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
     pagination_class = FavoritePagination
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, **kwargs):
+        if request.user:
+            request.data['client'] = request.user.id
+            return super().create(request, **kwargs)
+        else:
+            return JsonResponse({'error': 'You dont have permissions to do that'}, status=400)
 
     @action(detail=False)
     def search_by_user_id(self, request):
-        client_id = self.request.query_params.get('client_id')
-
-        if client_id:
-            queryset = Favorite.objects.filter(client=client_id)
+        queryset = Favorite.objects.filter(client=request.user.id)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -113,7 +129,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 
     @action(detail=False)
     def verify(self, request):
-        client_id = self.request.query_params.get('client_id')
+        client_id = request.user.id
         product_id = self.request.query_params.get('product_id')
         if client_id and product_id:
             queryset = Favorite.objects.filter(client=client_id, product=product_id)
@@ -122,10 +138,9 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 
     @action(detail=False)
     def delete(self, request):
-        user_id = self.request.query_params.get('user_id')
         product_id = self.request.query_params.get('product_id')
-        if user_id and product_id:
-            Favorite.objects.filter(client=user_id, product=product_id).delete()
+        if product_id:
+            Favorite.objects.filter(client=request.user.id, product=product_id).delete()
             return HttpResponse(status=200)
         return JsonResponse({'error': 'something bad'}, status=400)
 

@@ -10,24 +10,30 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    fields = ('client', 'product', 'cant', 'deposit', 'date_order', 'date_delivery')
+    fields = ('client', 'product', 'cant', 'deposit', 'date_order', 'date_delivery', 'product_status')
     icon_name = 'shop'
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    fields = ('name', 'description', 'category', 'article', 'photo', 'price')
+    fields = ('name', 'description', 'category', 'supply', 'photo', 'price')
     icon_name = 'card_giftcard'
 
 
-@admin.register(Article)
-class ArticleAdmin(admin.ModelAdmin):
-    fields = ('code', 'description', 'replacement_price')
+@admin.register(Supply)
+class SupplyAdmin(admin.ModelAdmin):
+    fields = ('component', 'cant_per_prod')
+    icon_name = 'card_giftcard'
+
+
+@admin.register(Component)
+class ComponentAdmin(admin.ModelAdmin):
+    fields = ('code', 'description', 'replacement_price', 'stock')
     icon_name = 'card_giftcard'
 
 
 @admin.register(Category)
-class ArticleAdmin(admin.ModelAdmin):
+class CategoryAdmin(admin.ModelAdmin):
     fields = ('name', 'icon')
     icon_name = 'shop'
 

@@ -1,8 +1,11 @@
 from django.db import models
+
+from galaEstampas.settings import EMAIL_HOST_USER, BASE_DIR
 from users.models import User
 import datetime
 from django.utils import timezone
-
+from django.utils.translation import gettext_lazy as _
+from django.core.mail import send_mail
 
 class Client(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profiles')
@@ -23,17 +26,36 @@ class Client(models.Model):
         verbose_name_plural = 'Clientes'
 
 
-class Article(models.Model):
+class Component(models.Model):
     code = models.CharField(unique=True, max_length=20, verbose_name='Código')
     description = models.TextField(default='', verbose_name='Descripción')
     replacement_price = models.IntegerField(default=0, verbose_name='Precio de reposición')
+    stock = models.IntegerField(default=0, verbose_name="Disponibles")
+
+    def reduce_stock(self, cant):
+        self.stock -= cant
 
     def __str__(self):
-        return f'({self.code}) + {self.description}'
+        return f'({self.code}) - {self.description}'
 
     class Meta:
-        verbose_name = 'Artículo'
-        verbose_name_plural = 'Artículos'
+        verbose_name = 'Componente'
+        verbose_name_plural = 'Componentes'
+
+
+class Supply(models.Model):
+    component = models.ForeignKey(Component, on_delete=models.CASCADE, null=True, verbose_name='Componente')
+    cant_per_prod = models.IntegerField(default=1, verbose_name="Cantidad por por producto")
+
+    def __str__(self):
+        return f'{self.component.__str__()} - cant: {self.cant_per_prod}'
+
+    class Meta:
+        verbose_name = 'Insumo'
+        verbose_name_plural = 'Insumos'
+
+    def reduce_stock(self, cant):
+        self.component.reduce_stock(cant * self.cant_per_prod)
 
 
 class Category(models.Model):
@@ -49,9 +71,10 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+
     name = models.TextField(default='', verbose_name='Nombre')
     description = models.TextField(blank=True, null=True, verbose_name='Descripción')
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, verbose_name='Artículo')
+    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, null=True, verbose_name='Artículo')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
     photo = models.ImageField(upload_to='product_photo', blank=True, null=True, verbose_name='Foto de producto')
     price = models.IntegerField(verbose_name='Precio')
@@ -63,8 +86,21 @@ class Product(models.Model):
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
 
+    def reduce_stock(self, cant):
+        self.supply.reduce_stock(cant)
+
 
 class Order(models.Model):
+
+    class ProductStatus(models.TextChoices):
+        ORDER = 'OR', _('Pedido')
+        ACCEPT = 'AC', _('Aceptado')
+        IN_PROCESS = 'PR', _('En proceso')
+        FINISHED = 'FN', _('Terminado')
+        DELIVERED = 'DE', _('Entregado')
+        REJECT = 'RJ', _('Rechazado')
+        CANCELED = 'CC', _('Cancelado')
+
     client = models.ForeignKey(User, on_delete=models.CASCADE, default=None, verbose_name='Cliente')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Producto')
     cant = models.IntegerField(default=1, verbose_name='Cantidad')
@@ -72,9 +108,27 @@ class Order(models.Model):
     date_delivery = models.DateField(default=datetime.date.today() + timezone.timedelta(days=5), verbose_name='Fecha de Entrega')
     deposit = models.IntegerField(default=0, verbose_name='Adelanto')
     ticket = models.IntegerField(default=0, verbose_name='Factura') #esto tmb puede ser un modelo
+    product_status = models.CharField(
+        max_length=2,
+        choices=ProductStatus.choices,
+        default=ProductStatus.ORDER,
+    )
 
     def __str__(self):
-        return f'{self.client} {self.date_delivery}'
+        return f'{self.client.first_name} {self.product} {self.date_delivery}'
+
+    def save(self, *args, **kwargs):
+        send_mail(
+            'Se ha creado tu pedido',
+            f'{self.client.first_name} {self.product} {self.date_delivery}',
+            'sirdemian@gmail.com',
+            ['cansadadepensar@gmail.com'],
+            fail_silently=False
+        )
+        if getattr(self, 'product_status') == Order.ProductStatus.FINISHED:
+            self.product.reduce_stock(self.cant)
+
+        super(Order, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Pedido'

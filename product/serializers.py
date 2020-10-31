@@ -11,10 +11,16 @@ class ClientSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'birthdate', 'address', 'city', 'state', 'country', 'zip_code', 'telephone')
 
 
-class ArticleSerializer(serializers.ModelSerializer):
+class ComponentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Article
-        fields = ('id', 'code', 'description', 'replacement_price')
+        model = Component
+        fields = ('id', 'code', 'description', 'replacement_price', 'stock')
+
+
+class SupplySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Supply
+        fields = ('id', 'component', 'cant_per_prod')
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -28,7 +34,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'category_id', 'category', 'article', 'photo', 'price')
+        fields = ('id', 'name', 'description', 'category_id', 'category', 'supply', 'photo', 'price')
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -36,7 +42,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'client', 'product_id', 'product', 'cant', 'date_order', 'date_delivery', 'deposit')
+        fields = ('id', 'client', 'product_id', 'product', 'cant', 'date_order', 'date_delivery', 'deposit', 'product_status')
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
