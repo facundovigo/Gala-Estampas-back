@@ -64,14 +64,11 @@ class OrderViewSet(viewsets.ModelViewSet):
     def create(self, request, **kwargs):
         date_required = datetime.datetime.strptime(request.data['date_delivery'], "%Y-%m-%d").date()
         date_min = datetime.date.today() + timezone.timedelta(days=5)
-        if request.user:
-            request.data['client'] = request.user.id
-            if date_required and date_required > date_min:
-                return super().create(request, **kwargs)
-            else:
-                return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
+        request.data['client'] = request.user.id
+        if date_required and date_required > date_min:
+            return super().create(request, **kwargs)
         else:
-            return JsonResponse({'error': 'You dont have permissions to do that'}, status=400)
+            return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
 
     @action(detail=False)
     def search_order(self, request):
