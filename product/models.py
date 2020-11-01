@@ -33,14 +33,17 @@ class Component(models.Model):
     stock = models.IntegerField(default=0, verbose_name="Disponibles")
 
     def reduce_stock(self, cant):
-        self.stock -= cant
+        print('1', self.stock)
+        self.stock = self.stock - cant
+        print('2', self.stock)
+        super(Component, self).save()
 
     def __str__(self):
         return f'({self.code}) - {self.description}'
 
     class Meta:
-        verbose_name = 'Componente'
-        verbose_name_plural = 'Componentes'
+        verbose_name = 'Stock disponible'
+        verbose_name_plural = 'Stock disponible'
 
 
 class Supply(models.Model):
@@ -74,7 +77,7 @@ class Product(models.Model):
 
     name = models.TextField(default='', verbose_name='Nombre')
     description = models.TextField(blank=True, null=True, verbose_name='Descripción')
-    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, null=True, verbose_name='Artículo')
+    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, null=True, verbose_name='Insumo')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
     photo = models.ImageField(upload_to='product_photo', blank=True, null=True, verbose_name='Foto de producto')
     price = models.IntegerField(verbose_name='Precio')
@@ -118,15 +121,26 @@ class Order(models.Model):
         return f'{self.client.first_name} {self.product} {self.date_delivery}'
 
     def save(self, *args, **kwargs):
-        send_mail(
-            'Se ha creado tu pedido',
-            f'{self.client.first_name} {self.product} {self.date_delivery}',
-            'sirdemian@gmail.com',
-            ['cansadadepensar@gmail.com'],
-            fail_silently=False
-        )
+        if getattr(self, 'product_status') == Order.ProductStatus.ORDER:
+            send_mail(
+                f'Se ha creado tu pedido en galaestampas.ar',
+                f'Has elegido un {self.product}. El número de orden es {self.id} '
+                f'y estará siendo entregado el día: {self.date_delivery}'
+                f'Gala Estampas, regalos pensados',
+                'sirdemian@gmail.com',
+                ['cansadadepensar@gmail.com'],
+                fail_silently=False
+            )
         if getattr(self, 'product_status') == Order.ProductStatus.FINISHED:
             self.product.reduce_stock(self.cant)
+            send_mail(
+                f'Tu pedido {self.id} está en camino!!! GALA ESTAMPAS',
+                f'Tu pedido con número {self.id} pronto llegará a tus manos'
+                f'Gracias por elegirnos',
+                'sirdemian@gmail.com',
+                ['cansadadepensar@gmail.com'],
+                fail_silently=False
+            )
 
         super(Order, self).save(*args, **kwargs)
 
