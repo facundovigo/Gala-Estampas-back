@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 from galaEstampas.settings import EMAIL_HOST_USER, BASE_DIR
 from users.models import User
@@ -6,6 +7,8 @@ import datetime
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
+
 
 class Client(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profiles')
@@ -121,24 +124,30 @@ class Order(models.Model):
         return f'{self.client.first_name} {self.product} {self.date_delivery}'
 
     def save(self, *args, **kwargs):
+        usr = self.client.email
+        print(usr, "email")
         if getattr(self, 'product_status') == Order.ProductStatus.ORDER:
+            html_message = render_to_string('mail_template_order_create.html',
+                                            {'order_num': self.id, 'product': self.product})
             send_mail(
                 f'Se ha creado tu pedido en galaestampas.ar',
-                f'Has elegido un {self.product}. El número de orden es {self.id} '
-                f'y estará siendo entregado el día: {self.date_delivery}'
-                f'Gala Estampas, regalos pensados',
+                f'Gracias por elegirnos',
                 'sirdemian@gmail.com',
-                ['cansadadepensar@gmail.com'],
+                [usr],
+                html_message=html_message,
                 fail_silently=False
             )
         if getattr(self, 'product_status') == Order.ProductStatus.FINISHED:
             self.product.reduce_stock(self.cant)
+
+            html_message = render_to_string('mail_template_finish_order.html', {'order_num': self.id})
+
             send_mail(
                 f'Tu pedido {self.id} está en camino!!! GALA ESTAMPAS',
-                f'Tu pedido con número {self.id} pronto llegará a tus manos'
                 f'Gracias por elegirnos',
                 'sirdemian@gmail.com',
-                ['cansadadepensar@gmail.com'],
+                [usr],
+                html_message=html_message,
                 fail_silently=False
             )
 

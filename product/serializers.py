@@ -42,7 +42,15 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'client', 'product_id', 'product', 'cant', 'date_order', 'date_delivery', 'deposit', 'product_status')
+        fields = ('id',
+                  'client',
+                  'product_id',
+                  'product',
+                  'cant',
+                  'date_order',
+                  'date_delivery',
+                  'deposit',
+                  'product_status')
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
