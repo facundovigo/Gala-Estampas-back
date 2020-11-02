@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
 from .models import *
@@ -64,6 +63,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     def create(self, request, **kwargs):
         date_required = datetime.datetime.strptime(request.data['date_delivery'], "%Y-%m-%d").date()
         date_min = datetime.date.today() + timezone.timedelta(days=5)
+
         if request.user:
             request.data['client'] = request.user.id
             if date_required and date_required > date_min:
@@ -72,7 +72,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             else:
                 return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
         else:
-            return JsonResponse({'error': 'You dont have permissions to do that'}, status=400)
+            return JsonResponse({'error': 'date delivery must be 5 days greater than today'}, status=400)
 
     @action(detail=False)
     def search_order(self, request):
@@ -133,8 +133,10 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         product_id = self.request.query_params.get('product_id')
         if client_id and product_id:
             queryset = Favorite.objects.filter(client=client_id, product=product_id)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return JsonResponse({'error': 'something bad'}, status=400)
 
     @action(detail=False)
     def delete(self, request):

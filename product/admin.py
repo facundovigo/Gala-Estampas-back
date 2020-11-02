@@ -23,21 +23,21 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(Supply)
 class SupplyAdmin(admin.ModelAdmin):
     fields = ('component', 'cant_per_prod')
-    icon_name = 'card_giftcard'
+    icon_name = 'assignment'
 
 
 @admin.register(Component)
 class ComponentAdmin(admin.ModelAdmin):
     fields = ('code', 'description', 'replacement_price', 'stock')
-    icon_name = 'card_giftcard'
+    icon_name = 'local_shipping'
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     fields = ('name', 'icon')
-    icon_name = 'shop'
+    icon_name = 'category'
 
 @admin.register(ZipAmount)
 class ZipAmountAdmin(admin.ModelAdmin):
     fields = ('zip_code', 'amount')
-    icon_name = 'geo'
+    icon_name = 'monetization_on'

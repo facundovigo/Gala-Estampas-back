@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 from galaEstampas.settings import EMAIL_HOST_USER, BASE_DIR
 from users.models import User
@@ -6,6 +7,8 @@ import datetime
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
+
 
 class Client(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profiles')
@@ -33,14 +36,17 @@ class Component(models.Model):
     stock = models.IntegerField(default=0, verbose_name="Disponibles")
 
     def reduce_stock(self, cant):
-        self.stock -= cant
+        print('1', self.stock)
+        self.stock = self.stock - cant
+        print('2', self.stock)
+        super(Component, self).save()
 
     def __str__(self):
         return f'({self.code}) - {self.description}'
 
     class Meta:
-        verbose_name = 'Componente'
-        verbose_name_plural = 'Componentes'
+        verbose_name = 'Stock disponible'
+        verbose_name_plural = 'Stock disponible'
 
 
 class Supply(models.Model):
@@ -74,7 +80,7 @@ class Product(models.Model):
 
     name = models.TextField(default='', verbose_name='Nombre')
     description = models.TextField(blank=True, null=True, verbose_name='Descripción')
-    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, null=True, verbose_name='Artículo')
+    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, null=True, verbose_name='Insumo')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
     photo = models.ImageField(upload_to='product_photo', blank=True, null=True, verbose_name='Foto de producto')
     price = models.IntegerField(verbose_name='Precio')
@@ -115,19 +121,33 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f'{self.client.first_name} {self.product} {self.date_delivery}'
+        return f'Pedido Nro: {self.id}, Cliente: {self.client.first_name}, Fecha de entrega: {self.date_delivery}'
 
     def save(self, *args, **kwargs):
-        send_mail(
-            'Se ha creado tu pedido',
-            f'{self.client.first_name} {self.product} {self.date_delivery}',
-            'sirdemian@gmail.com',
-            ['cansadadepensar@gmail.com'],
-            fail_silently=False
-        )
+        usr = self.client.email
+        if getattr(self, 'product_status') == Order.ProductStatus.ORDER:
+            html_message = render_to_string('mail_template_order_create.html',
+                                            {'order_num': self.id, 'product': self.product})
+            send_mail(
+                f'Se ha creado tu pedido en galaestampas.ar',
+                f'Gracias por elegirnos',
+                'sirdemian@gmail.com',
+                [usr],
+                html_message=html_message,
+                fail_silently=False
+            )
         if getattr(self, 'product_status') == Order.ProductStatus.FINISHED:
             self.product.reduce_stock(self.cant)
+            html_message = render_to_string('mail_template_finish_order.html', {'order_num': self.id})
 
+            send_mail(
+                f'Tu pedido {self.id} está en camino!!! GALA ESTAMPAS',
+                f'Gracias por elegirnos',
+                'sirdemian@gmail.com',
+                [usr],
+                html_message=html_message,
+                fail_silently=False
+            )
         super(Order, self).save(*args, **kwargs)
 
     class Meta:
