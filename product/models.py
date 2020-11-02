@@ -121,11 +121,10 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f'{self.client.first_name} {self.product} {self.date_delivery}'
+        return f'Pedido Nro: {self.id}, Cliente: {self.client.first_name}, Fecha de entrega: {self.date_delivery}'
 
     def save(self, *args, **kwargs):
         usr = self.client.email
-        print(usr, "email")
         if getattr(self, 'product_status') == Order.ProductStatus.ORDER:
             html_message = render_to_string('mail_template_order_create.html',
                                             {'order_num': self.id, 'product': self.product})
@@ -139,7 +138,6 @@ class Order(models.Model):
             )
         if getattr(self, 'product_status') == Order.ProductStatus.FINISHED:
             self.product.reduce_stock(self.cant)
-
             html_message = render_to_string('mail_template_finish_order.html', {'order_num': self.id})
 
             send_mail(
@@ -150,7 +148,6 @@ class Order(models.Model):
                 html_message=html_message,
                 fail_silently=False
             )
-
         super(Order, self).save(*args, **kwargs)
 
     class Meta:

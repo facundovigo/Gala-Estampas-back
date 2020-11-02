@@ -2,24 +2,21 @@ from django.test import TestCase
 
 from .models import *
 from django.db import models
+from .serializers import UserSerializer
 
 
 class SupplyModelTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        Supply.objects.create(code='test_name', description='test_description', replacement_price='350')
+        stock = Component.objects.create(code='test_name', description='test_description', replacement_price='350',
+                                         stock=10)
+        Supply.objects.create(component=stock, cant_per_prod=5)
 
-    def test_supply_replacement_price_is_an_integer(self):
-        supply = Supply.objects.get(id=1)
-        replacement_price = supply._meta.get_field('replacement_price')
-        print(replacement_price)
-        self.assertTrue(isinstance(replacement_price, models.IntegerField))
-
-    def test_supply_code_max_length_equals_20(self):
-        supply = Supply.objects.get(id=1)
-        code = supply._meta.get_field('code')
-        self.assertTrue(code, 20)
+    def test_supply_cant_per_prod_is_an_integer(self):
+        supply = Supply.objects.get(cant_per_prod=5)
+        cant_per_prod = supply._meta.get_field('cant_per_prod')
+        self.assertTrue(isinstance(cant_per_prod, models.IntegerField))
 
 
 class ClientModelTest(TestCase):
@@ -41,9 +38,10 @@ class OrderModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         User.objects.create(username='test@test.com', password='password')
-        art = Supply.objects.create(code='test_name', description='test_description', replacement_price='350')
+        stock = Component.objects.create(code='test_name', description='test_description', replacement_price=500, stock=10)
+        art = Supply.objects.create(component=stock, cant_per_prod=2)
         cat = Category.objects.create(name='test_name', icon='icon.png')
-        Product.objects.create(supply=art, category=cat, price=350)
+        Product.objects.create(supply=art, category=cat, price=500)
 
     def test_order_date_delivery_is_5_days_past_to_date_order_on_default_delivery_date(self):
         product = Product.objects.get(id=1)
@@ -64,3 +62,16 @@ class OrderModelTest(TestCase):
         valid_date = datetime.date.today() + timezone.timedelta(days=7)
         valid_order = Order.objects.create(client=user, product=product, date_delivery=valid_date)
         self.assertEqual(valid_order.date_delivery, valid_date)
+
+    def test_when_order_status_change_to_finished_the_stock_is_reduce(self):
+        user = User.objects.get(username='test@test.com')
+        stock = Component.objects.create(code='test_comp_name', description='test_description', replacement_price=1100,
+                                         stock=10)
+        art = Supply.objects.create(component=stock, cant_per_prod=2)
+        cat = Category.objects.create(name='test_cat_name', icon='icon.png')
+        Product.objects.create(supply=art, category=cat, price=1000)
+        prod = Product.objects.get(price=1000)
+        print(UserSerializer(user, many=False).data)
+        #order.state = Order.ProductStatus.FINISHED
+
+        self.assertTrue(Component.objects.get(replacement_price=500).stock == 10)
