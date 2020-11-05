@@ -102,3 +102,13 @@ class CustomUserViewset(viewsets.ModelViewSet):
         token = Token.objects.get_or_create(user=user)[0]
 
         return Response(LoginSerializer(token).data)
+
+    @action(methods=['post'], detail=False, permission_classes=[permissions.IsAuthenticated])
+    def set_password(self, request):
+        usr = request.user
+        usr.set_password(request.data['new_password'])
+        usr.save()
+
+        token = Token.objects.get_or_create(user=usr)[0]
+
+        return Response(LoginSerializer(token).data)
