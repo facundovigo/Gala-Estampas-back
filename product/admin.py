@@ -10,7 +10,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    fields = ('client', 'product', 'cant', 'deposit', 'date_order', 'date_delivery', 'product_status')
+    fields = ('client', 'product', 'cant', 'ticket', 'deposit', 'date_order', 'date_delivery', 'product_status')
     icon_name = 'shop'
 
 

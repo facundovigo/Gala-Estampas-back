@@ -113,7 +113,7 @@ class Order(models.Model):
     date_order = models.DateField(default=datetime.date.today, verbose_name='Fecha de Pedido')
     date_delivery = models.DateField(default=datetime.date.today() + timezone.timedelta(days=5), verbose_name='Fecha de Entrega')
     deposit = models.IntegerField(default=0, verbose_name='Adelanto')
-    ticket = models.IntegerField(default=0, verbose_name='Factura') #esto tmb puede ser un modelo
+    ticket = models.IntegerField(default=0, verbose_name='Monto Total')
     product_status = models.CharField(
         max_length=2,
         choices=ProductStatus.choices,
@@ -125,6 +125,7 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         usr = self.client.email
+        self.price()
         if getattr(self, 'product_status') == Order.ProductStatus.ORDER:
             html_message = render_to_string('mail_template_order_create.html',
                                             {'order_num': self.id, 'product': self.product})
@@ -149,6 +150,9 @@ class Order(models.Model):
                 fail_silently=False
             )
         super(Order, self).save(*args, **kwargs)
+
+    def price(self):
+        self.ticket = self.product.price * self.cant
 
     class Meta:
         verbose_name = 'Pedido'

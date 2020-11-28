@@ -89,6 +89,14 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False)
+    def order_amount(self, request):
+        print(request, "hey!")
+        order_id = self.request.query_params.get('order_id')
+        order = Order.objects.get(id=order_id)
+        price = order.product.price
+        return Response(order.cant * price)
+
 
 class ComponentViewSet(viewsets.ModelViewSet):
     serializer_class = ComponentSerializer

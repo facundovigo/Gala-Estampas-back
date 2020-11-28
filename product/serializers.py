@@ -47,6 +47,7 @@ class OrderSerializer(serializers.ModelSerializer):
                   'product_id',
                   'product',
                   'cant',
+                  'ticket',
                   'date_order',
                   'date_delivery',
                   'deposit',
